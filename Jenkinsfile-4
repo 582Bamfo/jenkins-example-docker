@@ -1,20 +1,29 @@
 pipeline {
-  agent { dockerfile true }
+  agent none
   environment {
-        DOCKER_HUB_CREDENTIALS = credentials('your-docker-hub-credentials-id')
-        DOCKER_IMAGE_NAME = 'your-image-name'
+        DOCKER_HUB_CREDENTIALS = credentials('dkbamfo')
+        DOCKER_IMAGE_NAME = 'node:16-alpine'
         DOCKER_IMAGE_TAG = 'latest'
     }
+
   stages {
-    stage('Test') {
-      steps {
-        sh '''
-          node --version
-          git --version
-          curl --version
-        '''
+    stage('Back-end') {
+      agent {
+        docker { image 'maven:3.8.1-adoptopenjdk-11' }
       }
-    stage('Push to Docker Hub') {
+      steps {
+        sh 'mvn --version'
+      }
+    }
+    stage('Front-end') {
+      agent {
+        docker { image 'node:16-alpine' }
+      }
+      steps {
+        sh 'node --version'
+      }
+    }
+   stage('Push to Docker Hub') {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: DOCKER_HUB_CREDENTIALS, usernameVariable: 'DOCKER_HUB_USERNAME', passwordVariable: 'DOCKER_HUB_PASSWORD')]) {
@@ -24,6 +33,5 @@ pipeline {
                 }
             }
         }
-}
-}
+  }
 }
