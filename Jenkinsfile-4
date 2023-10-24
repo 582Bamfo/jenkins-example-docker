@@ -1,7 +1,7 @@
 pipeline {
   agent none
   environment {
-        DOCKER_HUB_CREDENTIALS = credentials('bamfodaniel@yahoo.com')
+        DOCKER_HUB_CREDENTIALS = credentials('dkbamfo')
         DOCKER_IMAGE_NAME = 'node:16-alpine'
         DOCKER_IMAGE_TAG = 'latest'
     }
