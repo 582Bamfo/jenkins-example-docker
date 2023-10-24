@@ -1,4 +1,20 @@
-stage('Push to Docker Hub') {
+pipeline {
+  agent { dockerfile true }
+  environment {
+        DOCKER_HUB_CREDENTIALS = credentials('your-docker-hub-credentials-id')
+        DOCKER_IMAGE_NAME = 'your-image-name'
+        DOCKER_IMAGE_TAG = 'latest'
+    }
+  stages {
+    stage('Test') {
+      steps {
+        sh '''
+          node --version
+          git --version
+          curl --version
+        '''
+      }
+    stage('Push to Docker Hub') {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: DOCKER_HUB_CREDENTIALS, usernameVariable: 'DOCKER_HUB_USERNAME', passwordVariable: 'DOCKER_HUB_PASSWORD')]) {
@@ -8,3 +24,6 @@ stage('Push to Docker Hub') {
                 }
             }
         }
+}
+}
+}
